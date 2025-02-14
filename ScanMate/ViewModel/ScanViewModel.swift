@@ -9,17 +9,28 @@ import SwiftUI
 import AVFoundation
 import PDFKit
 
+// MARK: 변환하고 싶은 파일 확장자 - ExportFormat
+enum ExportFormat {
+    case pdf
+    case jpeg
+}
+
+
+// MARK: ScanViewModel
 class ScanViewModel: ObservableObject {
     @Published var scannedImages: [UIImage] = []
     @Published var selectedImages: Set<Int> = []
     @Published var isShowingScanner = false
     @Published var showingExportOptions = false
     @Published var sourceType: UIImagePickerController.SourceType = .camera
+    @Published var selectedExportFormat: ExportFormat? = nil
+    @Published var showingFormatSelection = false
+
     
     func addScannedImages(_ images: [UIImage]) {
         scannedImages.append(contentsOf: images)
     }
-    
+
     func createPDF() -> Data? {
         let pdfDocument = PDFDocument()
         
@@ -32,6 +43,46 @@ class ScanViewModel: ObservableObject {
         }
         
         return pdfDocument.dataRepresentation()
+    }
+
+    func createJPEG() -> Data? {
+        let selectedIndices = selectedImages.sorted()
+        guard !selectedIndices.isEmpty,
+              let index = selectedIndices.first,
+              let image = scannedImages[safe: index] else {
+            return nil
+        }
+        
+        return image.jpegData(compressionQuality: 0.8)
+    }
+
+    func exportFile() -> URL? {
+        let fileName: String
+        let fileData: Data?
+
+        switch selectedExportFormat {
+        case .pdf:
+            print("PDF 저장")
+            fileName = "scanned.pdf"
+            fileData = createPDF()
+        case .jpeg:
+            print("JPEG 저장")
+            fileName = "scanned.jpg"
+            fileData = createJPEG()
+        case .none:
+            return nil
+        }
+
+        guard let data = fileData else { return nil }
+        
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        do {
+            try data.write(to: url)
+            return url
+        } catch {
+            print("파일 저장 실패: \(error)")
+            return nil
+        }
     }
     
     func checkCameraPermission() {
