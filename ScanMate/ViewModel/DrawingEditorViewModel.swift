@@ -32,21 +32,40 @@ class DrawingEditorViewModel: ObservableObject {
     }
     
     func updateDrawing(drawing: PKDrawing, at index: Int) {
-        guard index < canvasData.count else { return }
+        guard index < canvasData.count else {
+            print("Error: Invalid index for updateDrawing")
+            return
+        }
         canvasData[index] = drawing
+        objectWillChange.send()  // 명시적으로 변경 알림
     }
     
+//    func getMergedImage(at index: Int) -> UIImage? {
+//        guard index < images.count else { return nil }
+//        
+//        let baseImage = images[index]
+//        let drawing = canvasData[index]
+//
+//        let renderer = UIGraphicsImageRenderer(size: baseImage.size)
+//        return renderer.image { context in
+//            baseImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
+//            drawing.image(from: CGRect(origin: .zero, size: baseImage.size), scale: 1.0)
+//                .draw(in: CGRect(origin: .zero, size: baseImage.size))
+//        }
+//    }
     func getMergedImage(at index: Int) -> UIImage? {
         guard index < images.count else { return nil }
-        
-        let baseImage = images[index]
-        let drawing = canvasData[index]
 
-        let renderer = UIGraphicsImageRenderer(size: baseImage.size)
-        return renderer.image { context in
-            baseImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
-            drawing.image(from: CGRect(origin: .zero, size: baseImage.size), scale: 1.0)
-                .draw(in: CGRect(origin: .zero, size: baseImage.size))
-        }
+        let baseImage = images[index]
+        let drawingImage = canvasData[index].image(from: CGRect(origin: .zero, size: baseImage.size), scale: 1.0)
+
+        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, 0)
+        baseImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
+        drawingImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
+        let mergedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return mergedImage
     }
+
 }

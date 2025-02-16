@@ -193,9 +193,6 @@ struct ScanView: View {
             .padding(20)
 
         }
-        .onAppear {
-            print("Selected Images: \(viewModel.selectedImages)")
-        }
     }
     
 }

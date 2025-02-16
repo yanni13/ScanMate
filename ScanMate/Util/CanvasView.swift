@@ -28,12 +28,14 @@ struct Line {
 }
 
 
-struct CanvasView: UIViewRepresentable {
+struct CanvasView: UIViewRepresentable{
     @Binding var drawing: PKDrawing
     @Binding var tool: DrawingTool
     
+    
     class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: CanvasView
+        let toolPicker = PKToolPicker()
         
         init(_ parent: CanvasView) {
             self.parent = parent
@@ -44,24 +46,59 @@ struct CanvasView: UIViewRepresentable {
                 self.parent.drawing = canvasView.drawing
             }
         }
+        
+        func setupToolPicker(for canvasView: PKCanvasView) {
+                toolPicker.addObserver(canvasView)
+                toolPicker.setVisible(true, forFirstResponder: canvasView)
+                DispatchQueue.main.async {
+                    canvasView.becomeFirstResponder()
+                }
+            }
     }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
     
+//    func makeUIView(context: Context) -> PKCanvasView {
+//        let canvasView = PKCanvasView()
+//        canvasView.delegate = context.coordinator
+//        canvasView.drawing = drawing
+//        canvasView.backgroundColor = .clear
+//        canvasView.tool = PKInkingTool(.pen, color: .black, width: 5)
+//
+//        canvasView.drawingPolicy = .anyInput
+//        canvasView.isOpaque = false
+//        canvasView.isUserInteractionEnabled = true
+//        updateTool(canvasView)
+//        return canvasView
+//    }
+    
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
         canvasView.delegate = context.coordinator
+        canvasView.drawing = drawing
+        canvasView.tool = PKInkingTool(.pen, color: .black, width: 5)
         canvasView.backgroundColor = .clear
-        updateTool(canvasView)
+        canvasView.isOpaque = false
+        canvasView.isUserInteractionEnabled = true
+        context.coordinator.setupToolPicker(for: canvasView)
         return canvasView
     }
-    
+
+
+//    func updateUIView(_ uiView: PKCanvasView, context: Context) {
+//        uiView.drawing = drawing
+//        updateTool(uiView)
+//    }
+//    
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
-        uiView.drawing = drawing
-        updateTool(uiView)
+        if uiView.drawing != drawing {
+            print("Updating canvasView.drawing: \(drawing.strokes.count) strokes")
+            uiView.drawing = drawing
+        }
     }
+
     
     private func updateTool(_ canvasView: PKCanvasView) {
         let newTool: PKTool
