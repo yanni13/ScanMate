@@ -10,6 +10,8 @@ import VisionKit
 struct DocumentScannerView: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
     var onScanCompleted: ([UIImage]) -> Void
+    @State private var showDrawingEditor = false
+    @State private var scannedImages: [UIImage] = []
 
     func makeCoordinator() -> Coordinator {
         return Coordinator(self)
