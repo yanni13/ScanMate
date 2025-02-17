@@ -25,7 +25,9 @@ struct DrawingEditorView: View {
                         if viewModel.currentPage < scanViewModel.scannedImages.count {
                             GeometryReader { geometry in
                                 ZStack {
-                                    Image(uiImage: scanViewModel.scannedImages[viewModel.currentPage])
+//                                    Image(uiImage: scanViewModel.scannedImages[viewModel.currentPage])
+                                    Image(uiImage: viewModel.images[viewModel.currentPage])
+
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: geometry.size.width, height: geometry.size.height)
@@ -46,24 +48,24 @@ struct DrawingEditorView: View {
                         }
                     }
                 }
-                
-                HStack(spacing: 20) {
-                    Button(action: { viewModel.currentTool = .pen }) {
-                        Image(systemName: "pencil")
-                            .foregroundColor(viewModel.currentTool == .pen ? .blue : .gray)
-                    }
-                    
-                    Button(action: { viewModel.currentTool = .marker }) {
-                        Image(systemName: "highlighter")
-                            .foregroundColor(viewModel.currentTool == .marker ? .blue : .gray)
-                    }
-                    
-                    Button(action: { viewModel.currentTool = .signature }) {
-                        Image(systemName: "signature")
-                            .foregroundColor(viewModel.currentTool == .signature ? .blue : .gray)
-                    }
-                }
-                .padding()
+//                
+//                HStack(spacing: 20) {
+//                    Button(action: { viewModel.currentTool = .pen }) {
+//                        Image(systemName: "pencil")
+//                            .foregroundColor(viewModel.currentTool == .pen ? .blue : .gray)
+//                    }
+//                    
+//                    Button(action: { viewModel.currentTool = .marker }) {
+//                        Image(systemName: "highlighter")
+//                            .foregroundColor(viewModel.currentTool == .marker ? .blue : .gray)
+//                    }
+//                    
+//                    Button(action: { viewModel.currentTool = .signature }) {
+//                        Image(systemName: "signature")
+//                            .foregroundColor(viewModel.currentTool == .signature ? .blue : .gray)
+//                    }
+//                }
+//                .padding()
                 
                 if viewModel.images.count > 1 {
                     HStack {

@@ -103,7 +103,7 @@ struct ScanView: View {
                     
                     HStack {
                         // 선택된 이미지들에 대해 드로잉 편집 버튼 추가
-                        //if !viewModel.selectedImages.isEmpty {
+                        if !viewModel.selectedImages.isEmpty {
                         
                         Button(action: {
                             
@@ -143,7 +143,7 @@ struct ScanView: View {
                                 .cornerRadius(10)
                                 .buttonStyle(.plain)
                             })
-                        //}
+                        }
                     }
                     
  
@@ -178,14 +178,18 @@ struct ScanView: View {
                 }
                 .fullScreenCover(isPresented: $showDrawingEditor) {
                     DrawingEditorView(images: selectedImagesForDrawing) { editedImages in
-                        // 편집된 이미지로 원본 이미지 업데이트
+                         //편집된 이미지로 원본 이미지 업데이트
                         for (index, editedImage) in editedImages.enumerated() {
                             if let originalIndex = viewModel.selectedImages.sorted()[safe: index] {
                                 viewModel.scannedImages[originalIndex] = editedImage
                             }
                         }
+
+
+
                     }
                     .environmentObject(viewModel)
+                    
                 }
                 
             }

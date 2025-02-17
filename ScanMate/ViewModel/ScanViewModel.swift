@@ -25,11 +25,28 @@ class ScanViewModel: ObservableObject {
     @Published var sourceType: UIImagePickerController.SourceType = .camera
     @Published var selectedExportFormat: ExportFormat? = nil
     @Published var showingFormatSelection = false
+    @Published var mergedImage: UIImage?
 
     
     func addScannedImages(_ images: [UIImage]) {
         scannedImages.append(contentsOf: images)
     }
+    
+    func updateScannedImages(with mergedImage: UIImage, at indices: [Int]) {
+            guard !indices.isEmpty else { return }
+            
+            // 첫 번째 선택된 이미지 위치에 병합된 이미지 삽입
+            let firstIndex = indices.first!
+            scannedImages[firstIndex] = mergedImage
+
+            // 나머지 선택된 이미지 제거
+            for index in indices.dropFirst().reversed() {
+                scannedImages.remove(at: index)
+            }
+
+            // 선택 목록 초기화
+            selectedImages.removeAll()
+        }
 
     func createPDF() -> Data? {
         let pdfDocument = PDFDocument()

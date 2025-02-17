@@ -24,6 +24,6 @@ class CanvasUIView: PKCanvasView, PKCanvasViewDelegate {
     }
     
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        drawingChanged?(canvasView.drawing)  // ✅ 그릴 때마다 업데이트
+        drawingChanged?(canvasView.drawing)  // 그릴 때마다 업데이트
     }
 }

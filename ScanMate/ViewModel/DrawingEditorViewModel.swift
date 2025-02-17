@@ -39,33 +39,54 @@ class DrawingEditorViewModel: ObservableObject {
         canvasData[index] = drawing
         objectWillChange.send()  // 명시적으로 변경 알림
     }
-    
+
 //    func getMergedImage(at index: Int) -> UIImage? {
 //        guard index < images.count else { return nil }
-//        
-//        let baseImage = images[index]
-//        let drawing = canvasData[index]
 //
-//        let renderer = UIGraphicsImageRenderer(size: baseImage.size)
-//        return renderer.image { context in
-//            baseImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
-//            drawing.image(from: CGRect(origin: .zero, size: baseImage.size), scale: 1.0)
-//                .draw(in: CGRect(origin: .zero, size: baseImage.size))
-//        }
+//        let baseImage = images[index]
+//        let drawingImage = canvasData[index].image(from: CGRect(origin: .zero, size: baseImage.size), scale: 1.0)
+//
+//        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, 0)
+//        baseImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
+//        drawingImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
+//        let mergedImage = UIGraphicsGetImageFromCurrentImageContext()
+//        UIGraphicsEndImageContext()
+//
+//        return mergedImage
 //    }
+    
     func getMergedImage(at index: Int) -> UIImage? {
-        guard index < images.count else { return nil }
-
+        guard index < images.count && index < canvasData.count else {
+            print("Error: Invalid index (\(index)) for getMergedImage")
+            return nil
+        }
+        
         let baseImage = images[index]
-        let drawingImage = canvasData[index].image(from: CGRect(origin: .zero, size: baseImage.size), scale: 1.0)
-
-        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, 0)
+        let drawing = canvasData[index]
+        
+        UIGraphicsBeginImageContextWithOptions(baseImage.size, false, UIScreen.main.scale)
+        defer { UIGraphicsEndImageContext() }
+        
+        guard let context = UIGraphicsGetCurrentContext() else {
+            print("Error: Failed to create graphics context")
+            return nil
+        }
+        
+        // 베이스 이미지 그리기
         baseImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
+        
+        // 드로잉을 이미지로 변환하고 그리기
+        let drawingRect = CGRect(origin: .zero, size: baseImage.size)
+        let drawingImage = drawing.image(from: drawingRect, scale: UIScreen.main.scale)
         drawingImage.draw(in: CGRect(origin: .zero, size: baseImage.size))
-        let mergedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
+        
+        guard let mergedImage = UIGraphicsGetImageFromCurrentImageContext() else {
+            print("Error: Failed to get merged image from context")
+            return nil
+        }
+        
         return mergedImage
     }
+
 
 }

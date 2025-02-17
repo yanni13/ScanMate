@@ -60,20 +60,6 @@ struct CanvasView: UIViewRepresentable{
         Coordinator(self)
     }
     
-//    func makeUIView(context: Context) -> PKCanvasView {
-//        let canvasView = PKCanvasView()
-//        canvasView.delegate = context.coordinator
-//        canvasView.drawing = drawing
-//        canvasView.backgroundColor = .clear
-//        canvasView.tool = PKInkingTool(.pen, color: .black, width: 5)
-//
-//        canvasView.drawingPolicy = .anyInput
-//        canvasView.isOpaque = false
-//        canvasView.isUserInteractionEnabled = true
-//        updateTool(canvasView)
-//        return canvasView
-//    }
-    
     func makeUIView(context: Context) -> PKCanvasView {
         let canvasView = PKCanvasView()
         canvasView.delegate = context.coordinator
@@ -86,12 +72,6 @@ struct CanvasView: UIViewRepresentable{
         return canvasView
     }
 
-
-//    func updateUIView(_ uiView: PKCanvasView, context: Context) {
-//        uiView.drawing = drawing
-//        updateTool(uiView)
-//    }
-//    
     func updateUIView(_ uiView: PKCanvasView, context: Context) {
         if uiView.drawing != drawing {
             print("Updating canvasView.drawing: \(drawing.strokes.count) strokes")

@@ -11,7 +11,6 @@ struct MainView: View {
     var body: some View {
         NavigationStack {
             ScanView()
-            
             .navigationBarTitle("ScanMate", displayMode: .inline)
             .accentColor(.teal)
             
