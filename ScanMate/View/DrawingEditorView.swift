@@ -20,13 +20,18 @@ struct DrawingEditorView: View {
             VStack {
                 ZStack {
                     if scanViewModel.scannedImages.isEmpty {
-                        Text("사진을 불러오지 못했습니다.")
+                        Text("Please scan a photo first.")
                     } else {
                         if viewModel.currentPage < scanViewModel.scannedImages.count {
                             GeometryReader { geometry in
+                                let image = viewModel.images[viewModel.currentPage]
+                                    let imageSize = image.size
+                                    let scale = min(geometry.size.width / imageSize.width,
+                                                   geometry.size.height / imageSize.height)
+                                    let scaledWidth = imageSize.width * scale
+                                    let scaledHeight = imageSize.height * scale
                                 ZStack {
-//                                    Image(uiImage: scanViewModel.scannedImages[viewModel.currentPage])
-                                    Image(uiImage: viewModel.images[viewModel.currentPage])
+                                    Image(uiImage: image)
 
                                         .resizable()
                                         .scaledToFit()
@@ -37,35 +42,20 @@ struct DrawingEditorView: View {
                                             get: { viewModel.canvasData[viewModel.currentPage] },
                                             set: { viewModel.canvasData[viewModel.currentPage] = $0 }
                                         ),
-                                        tool: $viewModel.currentTool
+                                        tool: $viewModel.currentTool,
+                                        canvasSize: CGSize(width: scaledWidth, height: scaledHeight)
+
                                     )
                                     .frame(width: geometry.size.width, height: geometry.size.height)
                                     
                                 }
+                                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                             }
                         } else {
-                            Text("인덱스가 범위를 벗어났습니다.")
+                            Text("There was an issue retrieving the photo.")
                         }
                     }
                 }
-//                
-//                HStack(spacing: 20) {
-//                    Button(action: { viewModel.currentTool = .pen }) {
-//                        Image(systemName: "pencil")
-//                            .foregroundColor(viewModel.currentTool == .pen ? .blue : .gray)
-//                    }
-//                    
-//                    Button(action: { viewModel.currentTool = .marker }) {
-//                        Image(systemName: "highlighter")
-//                            .foregroundColor(viewModel.currentTool == .marker ? .blue : .gray)
-//                    }
-//                    
-//                    Button(action: { viewModel.currentTool = .signature }) {
-//                        Image(systemName: "signature")
-//                            .foregroundColor(viewModel.currentTool == .signature ? .blue : .gray)
-//                    }
-//                }
-//                .padding()
                 
                 if viewModel.images.count > 1 {
                     HStack {

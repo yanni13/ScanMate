@@ -31,7 +31,7 @@ struct Line {
 struct CanvasView: UIViewRepresentable{
     @Binding var drawing: PKDrawing
     @Binding var tool: DrawingTool
-    
+    let canvasSize: CGSize
     
     class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: CanvasView
@@ -50,6 +50,8 @@ struct CanvasView: UIViewRepresentable{
         func setupToolPicker(for canvasView: PKCanvasView) {
                 toolPicker.addObserver(canvasView)
                 toolPicker.setVisible(true, forFirstResponder: canvasView)
+            toolPicker.selectedTool = PKInkingTool(.pen, color: .black, width: 5)
+
                 DispatchQueue.main.async {
                     canvasView.becomeFirstResponder()
                 }
@@ -64,8 +66,7 @@ struct CanvasView: UIViewRepresentable{
         let canvasView = PKCanvasView()
         canvasView.delegate = context.coordinator
         canvasView.drawing = drawing
-        canvasView.tool = PKInkingTool(.pen, color: .black, width: 5)
-        canvasView.backgroundColor = .clear
+                canvasView.backgroundColor = .clear
         canvasView.isOpaque = false
         canvasView.isUserInteractionEnabled = true
         context.coordinator.setupToolPicker(for: canvasView)
@@ -77,20 +78,6 @@ struct CanvasView: UIViewRepresentable{
             print("Updating canvasView.drawing: \(drawing.strokes.count) strokes")
             uiView.drawing = drawing
         }
-    }
-
-    
-    private func updateTool(_ canvasView: PKCanvasView) {
-        let newTool: PKTool
-        switch tool {
-        case .pen:
-            newTool = PKInkingTool(.pen, color: .black, width: 3)
-        case .marker:
-            newTool = PKInkingTool(.marker, color: .yellow.withAlphaComponent(0.3), width: 10)
-        case .signature:
-            newTool = PKInkingTool(.pen, color: .blue, width: 2)
-        }
-        canvasView.tool = newTool
     }
 }
 

@@ -102,11 +102,9 @@ struct ScanView: View {
                     }
                     
                     HStack {
-                        // 선택된 이미지들에 대해 드로잉 편집 버튼 추가
-                        if !viewModel.selectedImages.isEmpty {
-                        
                         Button(action: {
-                            
+                            viewModel.scannedImages.removeAll()
+                            viewModel.selectedImages.removeAll()
                         }, label: {
                             HStack(spacing: 13) {
                                 Image(systemName: "trash")
@@ -121,13 +119,13 @@ struct ScanView: View {
                         
                         
                         Button(action: {
-                            selectedImagesForDrawing = viewModel.selectedImages.sorted()
-                                .compactMap { index in
-                                    guard index < viewModel.scannedImages.count else { return nil }
-                                    return viewModel.scannedImages[index]
-                                }
-                            print("Selected images for drawing: \(selectedImagesForDrawing.count)")
-                            drawingEditorViewModel.images = selectedImagesForDrawing
+//                            selectedImagesForDrawing = viewModel.selectedImages.sorted()
+//                                .compactMap { index in
+//                                    guard index < viewModel.scannedImages.count else { return nil }
+//                                    return viewModel.scannedImages[index]
+//                                }
+//                            print("Selected images for drawing: \(selectedImagesForDrawing.count)")
+//                            drawingEditorViewModel.images = selectedImagesForDrawing
 
 
                             showDrawingEditor = true
@@ -143,7 +141,6 @@ struct ScanView: View {
                                 .cornerRadius(10)
                                 .buttonStyle(.plain)
                             })
-                        }
                     }
                     
  
@@ -177,18 +174,19 @@ struct ScanView: View {
                     }
                 }
                 .fullScreenCover(isPresented: $showDrawingEditor) {
-                    DrawingEditorView(images: selectedImagesForDrawing) { editedImages in
-                         //편집된 이미지로 원본 이미지 업데이트
-                        for (index, editedImage) in editedImages.enumerated() {
-                            if let originalIndex = viewModel.selectedImages.sorted()[safe: index] {
-                                viewModel.scannedImages[originalIndex] = editedImage
-                            }
-                        }
-
-
-
-                    }
-                    .environmentObject(viewModel)
+//                    DrawingEditorView(images: selectedImagesForDrawing) { editedImages in
+//                         //편집된 이미지로 원본 이미지 업데이트
+//                        for (index, editedImage) in editedImages.enumerated() {
+//                            if let originalIndex = viewModel.selectedImages.sorted()[safe: index] {
+//                                viewModel.scannedImages[originalIndex] = editedImage
+//                            }
+//                        }
+//
+//
+//
+//                    }
+//                    .environmentObject(viewModel)
+                    Text("개발 중 입니다.\n조금만 더 기다려주세요!")
                     
                 }
                 
